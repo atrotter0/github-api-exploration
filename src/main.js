@@ -7,7 +7,6 @@ import { UserData } from './userData';
 
 $(function() {
   const user = new UserData('luandavidn');
+  user.getCommits();
   console.log(user);
-  console.log(user.getCommits());
-
 });
