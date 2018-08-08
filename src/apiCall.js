@@ -11,6 +11,7 @@ export class ApiCall {
         }
       }
       request.open("GET", url, true);
+      request.setRequestHeader("Authorization", `token ${process.env.github_aki_key}`);
       request.send();
     });
   }
