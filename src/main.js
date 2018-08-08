@@ -8,6 +8,6 @@ import { UserData } from './userData';
 $(function() {
   const user = new UserData('luandavidn');
   console.log(user);
-
+  console.log(user.getCommits());
 
 });
