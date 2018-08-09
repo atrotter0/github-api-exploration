@@ -1,41 +1,58 @@
+import { UserData } from './userData';
+import { ApiCall } from './apiCall';
 import $ from 'jquery';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
-import { UserData } from './userData';
-import { ApiCall } from './apiCall';
 
-function getFollowing() {
-  let user = new UserData('atrotter0');
-  const url = `https://api.github.com/users/${user.username}/following?page=${user.pagesCount}`;
-  let promise = ApiCall.request(url);
+function getData() {
+  const page = 1;
+  const user = new UserData('atrotter0');
+  getFollowerData(user, page);
+}
+
+function getFollowerData(user, page) {
+  const url = `https://api.github.com/users/${user.username}/following?page=${page}`;
+  let promise = ApiCall.makeRequest(url);
 
   promise.then((response) => {
-    user.parseAndPush(response);
-    displayAllCommits(user.following);
+    user.createFollowersList(response);
+    checkLastPage(user);
   }, (error) => {
     console.log(error.message);
-    user.pagesCount = 1;
+    user.pageCount = 1; //remove this?
   });
 }
 
-function displayAllCommits(usernames) {
-  usernames.forEach(function(username) {
-    getCommitCount(username);
-  });
+function checkLastPage(user) {
+  console.log("user last page: " + user.pageCount);
+  if (user.lastUserPage === true) {
+    console.log("got all users!");
+    //getCommitCount(user.followersList, 0, 1);
+  } else {
+    getFollowerData(user.pageCount);
+  }
+  console.log(user.followersList);
 }
 
-function getCommitCount(username) {
-  let user = new UserData(username);
-  const url = `https://api.github.com/users/${username}/events?page=${user.pagesCount}`;
+function getCommitCount(usernameList, iterator, page) {
+  let user = new UserData(usernameList[iterator]);
+  const url = `https://api.github.com/users/${user.username}/events?page=${page}`;
   let promise = ApiCall.request(url);
 
   promise.then((response) => {
-    user.parseAndCount(response);
-    console.log(user.username + " " + user.commitCount);
+    user.countCommits(response);
+    if (user.lastCommitPage) {
+      iterator++;
+      page = 1;
+      getCommitCount(usernameList, iterator, page);
+    } else {
+      page++;
+      getCommitCount(usernameList, iterator, page);
+    }
   }, (error) => {
     console.log(error.message);
-    user.pagesCount = 1;
+    user.pageCount = 1; //remove this?
   });
 }
 
@@ -43,6 +60,6 @@ function displayData() {
 
 }
 
-$(function() {
-  getFollowing();
+$(document).ready(function() {
+  getData();
 });

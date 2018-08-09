@@ -2,38 +2,56 @@ export class UserData {
   constructor(username) {
     this.username = username;
     this.commitCount = 0;
-    this.pagesCount = 1;
-    this.following = [];
+    this.pageCount = 1;
+    this.followersList = [];
+    this.positionInList = 0;
+    this.lastUserPage = false;
+    this.lastCommitPage = false;
   }
 
-  parseAndCount(response) {
+  createFollowersList(response) {
+    let parsed = JSON.parse(response);
+    if (this.onLastUserPage(parsed)) {
+      this.lastUserPage = true;
+      return;
+    }
+
+    if (!this.lastUserPage) {
+      for(let i = 0; i < parsed.length; i++) {
+        this.followersList.push(parsed[i].login);
+      }
+      this.pageCount++;
+    }
+  }
+
+  countCommits(response) {
     let parsed = JSON.parse(response);
     let count = 0;
+
+    if (this.onLastCommitPage(parsed)) {
+      this.lastCommitPage = true;
+      return;
+    }
+
     for(let i = 0; i < parsed.length; i++) {
       if (parsed[i].type == 'PushEvent') {
         count += parsed[i].payload.commits.length;
       }
     }
     this.commitCount += count;
-    this.pagesCount++;
-    this.getCommitCount();
-    console.log(this.username + "'s Commit Count: " + this.commitCount);
+    this.pageCount++;
   }
 
-  parseAndPush(response) {
-    let parsed = JSON.parse(response);
-    if (this.onLastPage(parsed)) return;
-
-    for(let i = 0; i < parsed.length; i++) {
-      this.following.push(parsed[i].login);
-    }
-    this.pagesCount++;
-    this.getFollowing();
-    console.log("Following: " + this.following);
-    console.log("Page Count: " + this.pagesCount);
-  }
-
-  onLastPage(parsed) {
+  onLastUserPage(parsed) {
     return (parsed[0] == undefined);
+  }
+
+  onLastCommitPage(parsed) {
+    return (parsed.length < this.maxCommitsPerPage());
+  }
+
+  maxCommitsPerPage() {
+    const commitsPerPage = 30;
+    return commitsPerPage;
   }
 }

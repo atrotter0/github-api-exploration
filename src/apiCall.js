@@ -1,8 +1,9 @@
 export class ApiCall {
-  static request(endpoint) {
+  static makeRequest(endpoint) {
     return new Promise(function(resolve, reject) {
       let request = new XMLHttpRequest();
       let url = endpoint;
+
       request.onload = function() {
         if (this.status === 200) {
           resolve(request.response);
@@ -11,7 +12,6 @@ export class ApiCall {
         }
       }
       request.open("GET", url, true);
-      request.setRequestHeader("Authorization", `token ${process.env.github_aki_key}`);
       request.send();
     });
   }
