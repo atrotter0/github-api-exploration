@@ -1,18 +1,12 @@
-# Project Title
+# Github API Exploration
 
-#### Epicodus JavaScript exercise, Date
+#### Epicodus JavaScript exercise, 08.08.18 - 08.09.18
 
-#### By Your Name Here
+#### By Abel Trotter & David Luan
 
 ## Description
 
-Add description here
-
-## Specs
-
-| Behavior | Input | Output |
-|----------|-------|--------|
-| Behavior | input | output |
+Exploration with Github API and promises in JavaScript.
 
 ## Setup on OSX
 
@@ -43,12 +37,8 @@ Add description here
 * Jasmine
 * Karma
 
-## Links
-
-* Add links here
-
 ## License
 
 This software is licensed under the MIT license.
 
-Copyright (c) 2018 **Your Name Here**
+Copyright (c) 2018 **Abel Trotter & David Luan**
